@@ -21,8 +21,13 @@ void calculate(long int n) {
     printf("Average = %f\n",average);
 }
 
-int main() {
+int main(int argc, char** argv) {
     srand(time(NULL));
-    calculate(1e9);
+    long int n=1e5;
+    if (argc > 1) {
+        n=(long int)atof(argv[1]);
+    }
+    printf("n = %ld\n",n);
+    calculate(n);
     return 0;
 }
