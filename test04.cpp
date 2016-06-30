@@ -9,23 +9,18 @@
 #include <math.h>
 #include <stdio.h>
 #include <iostream>
-#include <thread>
-
-double final = 0;
-std::mutex final_mutex;
+#include <omp.h>
 
 void calculate(long int n, double &out) {
     double average=0;
-    for(long int i=0; i<n; i++) {
+    long int i;
+    #pragma omp parallel for reduction (+:average) private (i) schedule (guided,(int)1e7)
+    for(i=0; i<n; i++) {
         double random = (double)rand() / RAND_MAX * 2*M_PI;
         average += sin(random) + 0.5;
     }
     average /= n;
-    {
-        std::lock_guard<std::mutex> lock(final_mutex);
-        printf("Average = %f\n",average);
-        out += average;
-    }
+    out = average;
 }
 
 int main(int argc, char** argv) {
@@ -42,20 +37,9 @@ int main(int argc, char** argv) {
     printf("n = %ld\n",n);
     printf("num_threads = %d\n",num_threads);
     
-    n /= num_threads;
-    std::thread* t = new std::thread[num_threads];
-    //Launch a thread
-    for(int i=0; i<num_threads; i++) {
-        t[i] = std::thread(calculate,n,std::ref(final));
-    }
+    double out = 0;
+    calculate(n,out);
+    printf("Final = %f\n",out);
     
-    //Join the thread with the main thread
-    for(int i=0; i<num_threads; i++) {
-        t[i].join();
-    }
-    final /= num_threads;
-    printf("Final average = %f\n",final);
-    
-    delete[] t;
     return 0;
 }

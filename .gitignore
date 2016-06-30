@@ -30,3 +30,9 @@
 # Moje
 test*
 !test*.cpp
+*.D
+*.dylib
+.DS_Store
+build
+*.root
+*.rootmap
