@@ -36,8 +36,6 @@ void runTask()
     //gROOT->LoadMacro("TFillTask.cxx+g");
     //gDebug=2;
     
-    gSystem->Load("build/PSD/libPSD.dylib");
-    
     TH1::AddDirectory(kFALSE);
     
     TMyTask* lTaskA = new TMyTask("lTaskA","A");
